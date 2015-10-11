@@ -12,7 +12,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import org.json.JSONObject;
 
 public class RegisterEvent extends HttpServlet{
 
@@ -70,16 +70,34 @@ public class RegisterEvent extends HttpServlet{
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			if(e.getErrorCode() == 1062){
-				pw.println("ALREADY REGISTERD!");
+				JSONObject obj 	 = new JSONObject();
+				obj.put("message", "SUCCESS");
+				pw.println(obj);
 			}
 			else{
-				pw.println("ERROR");
-				pw.println(e.getMessage());
+				JSONObject obj 	 = new JSONObject();
+				obj.put("message", "ERROR");
+				pw.println(obj);
 			}
 			
 		}catch (Exception e){
-			pw.println(e.getMessage());
+			JSONObject obj 	 = new JSONObject();
+			obj.put("message", "DATBASE_ERROR");
+			pw.println(obj);
 		}
 		pw.close();
 	}
+	
+	/*
+     *  Delete all references.
+     */
+    public void destroy() {
+        // Finalization code...
+    	try {
+			dbcon.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
 }

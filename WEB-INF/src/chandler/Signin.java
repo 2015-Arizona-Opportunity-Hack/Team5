@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.*;
+import chandler.CryptoUtils;
 import org.json.JSONObject;
 
 public class Signin extends HttpServlet {
@@ -46,6 +47,7 @@ public class Signin extends HttpServlet {
 		throws ServletException, IOException{
 		// Set response content type
 		response.setContentType("text/html");
+		response.setHeader("Access-Control-Allow-Origin", "*");
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 		PrintWriter pw = response.getWriter();

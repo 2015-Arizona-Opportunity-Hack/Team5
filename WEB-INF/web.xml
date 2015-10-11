@@ -70,5 +70,26 @@
         <servlet-name>ChandlerGetEvent</servlet-name>
         <url-pattern>/getevent</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>ChandlerGetAppointment</servlet-name>
+        <servlet-class>chandler.GetAppointments</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ChandlerGetAppointment</servlet-name>
+        <url-pattern>/getappointment</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ChandlerCreateAppointment</servlet-name>
+        <servlet-class>chandler.CreateAppointment</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ChandlerCreateAppointment</servlet-name>
+        <url-pattern>/createappointment</url-pattern>
+    </servlet-mapping>
+
 </web-app>     
 

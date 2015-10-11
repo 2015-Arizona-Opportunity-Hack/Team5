@@ -8,10 +8,9 @@ import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.*;
-import chandler.CryptoUtils;
 import org.json.JSONObject;
 
-public class Signup extends HttpServlet {
+public class CreateAppointment extends HttpServlet {
 
 	private Connection dbcon;  // Connection for scope of Application
 
@@ -44,60 +43,32 @@ public class Signup extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException{
 		PrintWriter pw = response.getWriter();
-		try{	
-			response.setHeader("Access-Control-Allow-Origin","*");
-			String email = request.getParameter("email");
-			String password = request.getParameter("password");
-			String encryPtPass = CryptoUtils.byteArrayToHexString(CryptoUtils.computeHash(password));
-			String firstName = request.getParameter("first_name");
-			String lastName = request.getParameter("last_name");
-			String address = request.getParameter("address");
-			String phone = request.getParameter("phone");
-			
+		try{
+			String date = request.getParameter("date");
+			String time = request.getParameter("time");
+			String userId = request.getParameter("user_id");
+			String text = request.getParameter("subject");
 			PreparedStatement insert = dbcon.prepareStatement(
-				"INSERT INTO USERS (email, password, first_name, last_name, address, phone) VALUES (?,?,?,?,?,?)");
-			insert.setString(1, email);
-			insert.setString(2, encryPtPass);
-			insert.setString(3, firstName);
-			insert.setString(4, lastName);
-			insert.setString(5, address);
-			insert.setString(6, phone);
+				"INSERT INTO appointment (user_id, text, date, time) VALUES (?,?,?,?)");
+			insert.setLong(1, Integer.parseInt(userId));
+			insert.setString(2, text);
+			insert.setDate(3, java.sql.Date.valueOf(date));
+			insert.setLong(4, Integer.parseInt(time));
 			insert.executeUpdate();
-			
-			//Get UserID
-			Statement stmt = dbcon.createStatement();
-			String getUserId = "SELECT id FROM users WHERE email = '" + email + "'";
-			ResultSet rs = stmt.executeQuery(getUserId);
-			int id = -1;
-			while(rs.next()){
-				id = rs.getInt("id");
-			}
-			if(id == -1){
-				pw.println("UNKNOWN_ERROR");
-			}
-			else{
-				//Successfully added the user. 
-				//Return User data in JSON
-				JSONObject obj 	 = new JSONObject();
-				obj.put("id", id);
-				obj.put("email", email);
-				obj.put("first_name", firstName);
-				obj.put("last_name", lastName);
-				obj.put("address", address);
-				obj.put("phone", phone);
-				obj.put("message" ,"SUCCESS");
-				pw.println(obj);
-			}
+			JSONObject obj 	 = new JSONObject();
+			obj.put("message", "SUCCESS");
+			pw.println(obj);
 		}catch(SQLException se){
 			if(se.getErrorCode() == 0){
 				//Duplicate ID. User already exist
 				JSONObject obj 	 = new JSONObject();
-				obj.put("message", "USER_ALREADY_EXISTS");
+				obj.put("message", "APPOINTMENT_NOT_AVAILABLE");
 				pw.println(obj);
 			}
 			else{
 				JSONObject obj 	 = new JSONObject();
-				obj.put("message", "DATABASE_ERROR");
+				obj.put("message", "ERROR");
+				pw.println(obj);
 				pw.println(obj);
 			}
 			
@@ -105,6 +76,7 @@ public class Signup extends HttpServlet {
 			JSONObject obj 	 = new JSONObject();
 			obj.put("message", "DATABASE_ERROR");
 			pw.println(obj);
+			pw.println(e.getMessage());
 		}
 		pw.close();
 	}

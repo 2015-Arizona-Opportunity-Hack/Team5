@@ -49,33 +49,18 @@ public class GetEvents extends HttpServlet{
     public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException{
     	PrintWriter pw = response.getWriter();
-	response.setHeader("Access-Control-Allow-Origin", "*");
     	String date = request.getParameter("curr_date");
-		String type = request.getParameter("type");
     	try{
     		Statement stmt = dbcon.createStatement();
-			String getEvents = "";
-			if(type.equals("ALL")){
-				getEvents = "SELECT id,name, description, location,"
-    				+ " organizer, start_time, end_time, date, type"
-    				+ " FROM event WHERE date >= '" + date + "'";
-			}
-			else{
-				getEvents = "SELECT id,name, description, location,"
-    				+ " organizer, start_time, end_time, date, type"
-    				+ " FROM event WHERE date >= '" + date + "' and "
-					+ " type = '"+ type + "'";
-			}
-    		//pw.println(getEvents);
-			ResultSet rs = stmt.executeQuery(getEvents);
+    		String getEvents = "SELECT id,name, description, location,"
+    				+ " organizer, stat_time, end_time, date, type"
+    				+ "FROM event WHERE date >= '" + date + "';";
+    		ResultSet rs = stmt.executeQuery(getEvents);
     		
-    		ArrayList<JSONObject> list = new ArrayList<JSONObject>();
-			JSONObject obj 	 = new JSONObject();
-			obj.put("message", "SUCCESS");
-			list.add(obj);
+    		ArrayList<JSONObject> list = new ArrayList<JSONObject>(); 		
     		while(rs.next()){
-    			obj 	 = new JSONObject();
-    			obj.put("id",rs.getInt("id") );
+    			JSONObject obj 	 = new JSONObject();
+    			obj.put("id",rs.getString("id") );
     			obj.put("name",rs.getString("name") );
     			obj.put("description",rs.getString("description") );
     			obj.put("location",rs.getString("location") );
@@ -87,19 +72,15 @@ public class GetEvents extends HttpServlet{
     			list.add(obj);
     		}
     		if(list.size() == 0){
-				JSONObject objNoData 	 = new JSONObject();
-				objNoData.put("message", "NO_DATA");
-				pw.println(objNoData);
+    			pw.println("NO_EVENTS");
     		}
     		else{
     			pw.println(list);
     		}
     		
     	}catch(Exception e){
-			JSONObject obj 	 = new JSONObject();
-			obj.put("message", "DATABASE_ERROR");
-    		pw.println(obj);
-	}
+    		pw.println(e.g);
+    	}
 	pw.close();
     	
     	
