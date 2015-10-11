@@ -49,7 +49,7 @@
 	}
 
 	/*For showing different pages on Need Help Page */
-	.selected {
+	/*.selected {
 		background-color: #d52349;
 		border-radius: 5px;
 		border-radius: 5px;
@@ -61,7 +61,7 @@
 		-ms-transition: background-color .25s ease-in-out;
 		transition: background-color .25s ease-in-out;
 		outline: 0;
-	}
+	}*/
 
 /* Box Model */
 
@@ -1604,6 +1604,18 @@
 		}
 
 /* Icons */
+	.current.selected-list{
+	background:#d52349;
+	color:#fff;
+	border-radius: 5px;
+	border-radius: 5px;
+	padding: 0.2em 0.2em 0.2em 0.2em;
+	}
+	
+	.current{
+	color:#d52349;
+	}
+	
 
 	.icon {
 		position: relative;
@@ -1850,7 +1862,7 @@
 			button,
 			.button {
 				font-size: 1.1em;
-				padding: 0.65em 1.5em 0.65em 1.5em;
+				/*padding: 0.65em 1.5em 0.65em 1.5em;*/
 			}
 
 				input[type="button"].big,

@@ -59,6 +59,7 @@
 					'</div>'
 				)
 					.appendTo($body);
+					
 
 			// Navigation Panel.
 				$(

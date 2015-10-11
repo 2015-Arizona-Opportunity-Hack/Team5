@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>
+    Chandler Food Bank
+  </title>
+  <!-- Latest compiled and minified CSS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/signUp.css">
+</head>
+<body>
+  <div align="center">
+      <h2>Please Sign Up</h2>
+      
+        <input class="form-control" id="first_name" name="first_name" type="text" placeholder="First Name" required autofocus>
+      <input class="form-control" id="last_name" name="last_name" type="text" placeholder="Last Name" required> 
+      <input class="form-control" id="email" name="email" type="email" placeholder="Email Address" required>
+      <input class="form-control" id="password" name="password" type="password" placeholder="Password">
+      <input class="form-control" id="verifypassword" type="password" placeholder="Confirm Password">
+      <input class="form-control" id="address" name="address" type="address" placeholder="Address" required>
+      <input class="form-control" id="phone" name="phone" type="phone" placeholder="Phone" required> 
+      <button type="submit" onclick="signUp();">Submit</button>
+      <br>
+      <div id="status_code"></div>
+      <br>
+      <h3>If you have already registered, Please sign in <a href="Signin.html">HERE</a></h3>
+      <br><br>
+      <h3><a href="home.html">HOME</a></h3>
+      </div>
+<script>
+function signUp(){
+    
+    $.ajax({
+    type:"POST",
+    url:"http://52.10.190.154:8080/chandler/signup",
+    data:{"email":$("#email").val(),"password":$("#password").val(),"first_name":$("#first_name").val(),"last_name":$("#last_name").val(),"phone":$("#phone").val(),"address":$("#address").val()},
+    success:function(data){
+    console.log(data);
+    if(JSON.parse(data).message.localeCompare("SUCCESS")==0){
+    window.localStorage.setItem("logged_in",1);
+    window.localStorage.setItem("email",data.email);
+    window.localStorage.setItem("first_name",data.first_name);
+    window.localStorage.setItem("last_name",data.last_name);
+    window.localStorage.setItem("user_id",data.id);
+    window.localStorage.setItem("phone",data.phone);
+    window.localStorage.setItem("role",JSON.parse(data).role);
+    window.location.href="home.html";
+    }else{
+    $("#status_code").text(data.message);
+    }
+    },
+    error:function(error){
+    console.log(error);
+    }
+    })
+    }
+</script>
+</body>
+</html>

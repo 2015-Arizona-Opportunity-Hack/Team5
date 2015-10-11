@@ -1,0 +1,237 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Chandler Christian Community Center</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+		<link rel="shortcut icon" href="images/logo1.jpg">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	</head>
+	<body class="left-sidebar">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+				<div id="header-wrapper">
+					<div id="header">
+							<nav id="nav">
+								<ul>
+									<li><a href="home.html">Home</a></li>									
+									<li><a href="NeedHelp.html">NEED HELP?</a></li>
+									<li><a href="programs.html">Programs</a></li>
+									<li class="current"><a href="Events.html">Events</a></li>
+									<li><a href="workWithUs.html">Work With Us!</a></li>									
+									<li><a href="contact.html">Contact</a></li>
+									<li><a href="Signup.html" id="logout_name">Sign In/Register</a></li>
+								</ul>
+							</nav>
+
+					</div>
+				</div>
+
+			<!-- Main -->
+				<div id="main-wrapper">
+					<div class="container">
+						<div class="row">
+							<div class="4u 12u(mobile)">
+
+								<!-- Sidebar -->
+									<section class="box" >
+										<header>
+												<ul class = "divided" style:"align:center">
+													<li><h3><a href='#' class = "current selected-list"  onclick="participateEvent();">Participate in an Event</a></h3></li>
+													<li><h3><a href='#' class = "current"  id="create_event" onclick="create_Event();" >Create an Event</a></h3></li>
+												</ul>
+										</header>
+									</section>
+
+							</div>
+							<div class="8u 12u(mobile) important(mobile)">
+
+								<!-- Content -->
+									<article class="box post">
+										<div>
+										<header>
+											<h2>Upcoming Events</h2>
+											<br>
+											<ul id="eventsTable" style="overflow:scroll;">
+											
+											</ul>
+											<ul id="eventsCreate" style="overflow:scroll;">
+											<li ><b>Please enter an event name:&emsp;</b><input type="text" id="event_name"></input></li>
+											<br>
+											<li ><b>Describe the goals of the event:&emsp;</b><textarea type="textarea" id="event_desc"></textarea></li>
+											<br>
+											<li ><b>Enter the location of the event:&emsp;</b><input type="text" id="event_location"></input></li>
+											<br>
+											<li ><b>Select the day of event:&emsp;</b><input type="date" id="event_date"></input></li>
+											<br>
+											<li ><b>Select the start time of the event:&emsp;</b><input type="time" id="event_starttime"></input></li>
+											<br>
+											<li ><b>Select the end time of the event:&emsp;</b><input type="time" id="event_endtime"></input></li>
+											<br>
+											<li ><b>Select the type of event:&emsp;</b><select id="event_option">
+ 												 <option value="food">Food</option>
+ 												 <option value="shelter">Shelter</option>
+ 												 <option value="education">Education</option>
+ 												 <option value="job">Job</option>
+											</select>
+											</li>
+											<br>
+											<li><button id="create_event_submit" onclick='postCreateEvent();'>Create</button><li>
+											</ul>
+										</header>
+										</div>
+									</article>
+
+							</div>
+						</div>
+					</div>
+				</div>
+		</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.dropotron.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/skel-viewport.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+			<script>
+			$(document).ready(function(){
+			var d = new Date();
+			var strDate = d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
+			$.ajax({
+    		type:"GET",
+    		url:"http://52.10.190.154:8080/chandler/getevent",
+    		data:{"curr_date":strDate,"type":"ALL"},
+    		success:function(data){
+    		
+    		var scroll_event="";
+    		console.log(data);
+    		if(JSON.parse(data)[0].message=="NO_DATA"){
+    		$('#eventsTable').append("<li style='text-align:center;'>NO EVENTS</li>");
+    		}else if(JSON.parse(data)[0].message=="SUCCESS"){
+    		var event_data=JSON.parse(data);
+    		event_data.splice( 0, 1 );
+    		$.each(event_data,function(i,item){
+    		console.log(item.name);
+    		scroll_event+="<li style='text-align:center;'><b>"+item.name+"</b> Date: "+item.date+" Location: "+item.location+" &emsp; <button id='eventPart' class='event_button' name='Participate' onclick='participate("+item.id+");'>Participate</button> &emsp;<button id='eventVolunteer' name='Volunteer' class='event_button' onclick='volunteer("+item.id+");'>Volunteer</button> &emsp;<button id='eventDonate' name='Donate' class='event_button' onclick='donate("+item.id+");'>Donate</button><hr></li>";
+    		})
+    		scroll_event+="";
+    		$('#eventsTable').append(scroll_event);
+    		if(window.localStorage.getItem("logged_in")==null){
+			$('.event_button').hide();
+			}else{
+			if(window.localStorage.getItem("logged_in")!=1){
+			$('.event_button').hide();
+			}
+			}
+			
+    		}
+    		},
+    		error:function(error){
+    		console.log(error);
+    		}
+    		})
+    		
+    		if(window.localStorage.getItem("logged_in")!=null){
+			if(window.localStorage.getItem("logged_in")==1){
+			$('#logout_name').html(window.localStorage.getItem("first_name")+" <a onclick='logout();'>Logout</a>");
+			if(window.localStorage.getItem("role").localeCompare("ADMIN")!=0){
+			$('#create_event').hide();
+			}
+			}
+			}
+    		
+    		participateEvent();
+			});
+			
+			function logout(){
+    		localStorage.clear();
+    		window.location.href="home.html";
+    		}
+    		
+			function participate(eventid){
+			//console.log(eventid+"	"+window.localStorage.getItem("user_id"));
+			$.ajax({
+			url:"http://52.10.190.154:8080/chandler/event/register",
+			type:"POST",
+			data:{"user_id":window.localStorage.getItem("user_id"),"event_id":eventid,"action":'NEED HELP',"action_info":"needhelp"},
+			success:function(data){
+			alert(JSON.parse(data).message);
+			},
+			error:function(error){
+			console.log(error);
+			}
+			}
+			)
+			}
+			
+			function volunteer(eventid){
+			$.ajax({
+			url:"http://52.10.190.154:8080/chandler/event/register",
+			type:"POST",
+			data:{"user_id":window.localStorage.getItem("user_id"),"event_id":eventid,"action":"VOLUNTEER","action_info":"volunteer"},
+			success:function(data){
+			alert(JSON.parse(data).message);
+			},
+			error:function(error){
+			console.log(error);
+			}
+			}
+			)
+			}
+			
+			function donate(eventid){
+			$.ajax({
+			url:"http://52.10.190.154:8080/chandler/event/register",
+			type:"POST",
+			data:{"user_id":window.localStorage.getItem("user_id"),"event_id":eventid,"action":"DONATION","action_info":"donate"},
+			success:function(data){
+			alert(JSON.parse(data).message);
+			},
+			error:function(error){
+			console.log(error);
+			}
+			}
+			)
+			}
+			
+			function create_Event(){
+			$('#eventsTable').hide();
+			$('#eventsCreate').show();
+			var today = new Date().toISOString().split('T')[0];
+			document.getElementById("event_date").setAttribute('min', today);
+			
+			}
+			
+			function participateEvent(){
+			$('#eventsTable').show();
+			$('#eventsCreate').hide();
+			}
+			
+			function postCreateEvent(){
+			var send_data={"event_name":$('#event_name').val(),"description":$('#event_desc').val(),"location":$('#event_location').val(),"organizer_id":window.localStorage.getItem("user_id"),"start_time":$('#event_starttime').val()+":00","end_time":$('#event_endtime').val()+":00","event_date":$('#event_date').val(),"event_type":$('#event_option').val()};
+			console.log(send_data);
+			$.ajax({
+			url:"http://52.10.190.154:8080/chandler/createevent",
+			type:"POST",
+			data:send_data,
+			success:function(data){
+			console.log(data);
+			//alert(JSON.parse(data).message);
+			},
+			error:function(error){
+			console.log(error);
+			}
+			}
+			)
+			}
+			
+			</script>
+	</body>
+</html>
