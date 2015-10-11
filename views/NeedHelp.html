@@ -13,6 +13,68 @@
 		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+		<style>
+	      html, body {
+	        height: 100%;
+	        margin: 0;
+	        padding: 0;
+	      	}
+	      	 .google-maps {
+        position: relative;
+        padding-bottom: 75%; // This is the aspect ratio
+        height: 0;
+        overflow: hidden;
+    }
+    .google-maps iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        height: 100% !important;
+    }
+		.controls {
+		  margin-top: 10px;
+		  border: 1px solid transparent;
+		  border-radius: 2px 0 0 2px;
+		  box-sizing: border-box;
+		  -moz-box-sizing: border-box;
+		  height: 32px;
+		  outline: none;
+		  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+		}
+
+		#pac-input {
+		  background-color: #fff;
+		  font-family: Roboto;
+		  font-size: 15px;
+		  font-weight: 300;
+		  margin-left: 12px;
+		  padding: 0 11px 0 13px;
+		  text-overflow: ellipsis;
+		  width: 300px;
+		}
+
+		#pac-input:focus {
+		  border-color: #4d90fe;
+		}
+
+		.pac-container {
+		  font-family: Roboto;
+		}
+
+		#type-selector {
+		  color: #fff;
+		  background-color: #4d90fe;
+		  padding: 5px 11px 0px 11px;
+		}
+
+		#type-selector label {
+		  font-family: Roboto;
+		  font-size: 13px;
+		  font-weight: 300;
+		}
+
+	   </style>
 	</head>
 	<body class="left-sidebar">
 		<div id="page-wrapper">
@@ -51,7 +113,7 @@
 										<!--<a href="#" class="image featured"><img src="images/pic09.jpg" alt="" /></a>-->
 										<header>
 												<ul class = "divided" style:"align:center">
-													<li><h3><a href='#' class = "current" style = "color:#d52349" a.hover="background:#fff"}>Schedule an appoitment</a></h3></li>
+													<li><h3><a href='#' class = "current" style = "color:#d52349" a:hover:" background:#e53359">Schedule an appoitment</a></h3></li>
 													<li><h3><a href='#' class = "current" style = "color:#d52349">Request Pickup</a></h3></li>
 													<li><h3><a href='#' class = "current" style = "color:#d52349">Payment</a></h3></li>
 													<li><h3><a href='#' class = "current" style = "color:#d52349">Food</a></h3></li>
@@ -87,9 +149,94 @@
 								<!-- Content -->
 									<article class="box post">
 										<!--<a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>-->
-										<div style = "position:absolute; visibility:hidden" >
+										<div style = "position:absolute; " >
 											<header>
-												<h2>Schedule An Appointment</h2>
+												<h2>Schedule An Appointment</h2><br>
+												<input id="pac-input" class="controls" type="text"
+													        placeholder="Enter a location">
+													    <div id="map" class="google-maps"></div>
+
+													    <script>
+															function initMap() {
+															  var map = new google.maps.Map(document.getElementById('map'), {
+															    center: {lat: -33.8688, lng: 151.2195},
+															    zoom: 13
+															  });
+															  var input = /** @type {!HTMLInputElement} */(
+															      document.getElementById('pac-input'));
+
+															  var types = document.getElementById('type-selector');
+															  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+															  //map.controls[google.maps.ControlPosition.TOP_LEFT].push(types);
+
+															  var autocomplete = new google.maps.places.Autocomplete(input);
+															  autocomplete.bindTo('bounds', map);
+
+															  var infowindow = new google.maps.InfoWindow();
+															  var marker = new google.maps.Marker({
+															    map: map,
+															    anchorPoint: new google.maps.Point(0, -29)
+															  });
+
+															  autocomplete.addListener('place_changed', function() {
+															    infowindow.close();
+															    marker.setVisible(false);
+															    var place = autocomplete.getPlace();
+															    if (!place.geometry) {
+															      window.alert("Autocomplete's returned place contains no geometry");
+															      return;
+															    }
+
+															    // If the place has a geometry, then present it on a map.
+															    if (place.geometry.viewport) {
+															      map.fitBounds(place.geometry.viewport);
+															    } else {
+															      map.setCenter(place.geometry.location);
+															      map.setZoom(17);  // Why 17? Because it looks good.
+															    }
+															    marker.setIcon(/** @type {google.maps.Icon} */({
+															      url: place.icon,
+															      size: new google.maps.Size(71, 71),
+															      origin: new google.maps.Point(0, 0),
+															      anchor: new google.maps.Point(17, 34),
+															      scaledSize: new google.maps.Size(35, 35)
+															    }));
+															    marker.setPosition(place.geometry.location);
+															    marker.setVisible(true);
+
+															    var address = '';
+															    if (place.address_components) {
+															      address = [
+															        (place.address_components[0] && place.address_components[0].short_name || ''),
+															        (place.address_components[1] && place.address_components[1].short_name || ''),
+															        (place.address_components[2] && place.address_components[2].short_name || '')
+															      ].join(' ');
+															    }
+
+															    infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
+															    infowindow.open(map, marker);
+															  });
+
+															  // Sets a listener on a radio button to change the filter type on Places
+															  // Autocomplete.
+															  function setupClickListener(id, types) {
+															    var radioButton = document.getElementById(id);
+															    radioButton.addEventListener('click', function() {
+															      autocomplete.setTypes(types);
+															    });
+															  }
+
+															  setupClickListener('changetype-all', []);
+															  setupClickListener('changetype-address', ['address']);
+															  setupClickListener('changetype-establishment', ['establishment']);
+															  setupClickListener('changetype-geocode', ['geocode']);
+															}
+
+													    </script>
+													    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBSrFlCJdWbSv_Z8v0U1wFmkCaapdaoBvs&libraries=places&callback=initMap"
+													        async defer></script>
+  
+												
 												
 											</header>
 										</div>
