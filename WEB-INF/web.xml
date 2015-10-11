@@ -40,5 +40,25 @@
         <servlet-name>ChandlerSignin</servlet-name>
         <url-pattern>/signin</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>ChandlerRegisterEvent</servlet-name>
+        <servlet-class>chandler.RegisterEvent</servlet-class>
+    </servlet>
 
+    <servlet-mapping>
+        <servlet-name>ChandlerRegisterEvent</servlet-name>
+        <url-pattern>/event/register</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ChandlerCreateEvent</servlet-name>
+        <servlet-class>chandler.CreateEvent</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ChandlerCreateEvent</servlet-name>
+        <url-pattern>/createevent</url-pattern>
+    </servlet-mapping>
 </web-app>     
+

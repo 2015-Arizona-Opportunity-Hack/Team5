@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.sql.*;
 
 
-public class Signup extends HttpServlet {
+public class CreateEvent extends HttpServlet {
 	private String message;
 	
 	public void init() throws ServletException{
@@ -21,31 +21,37 @@ public class Signup extends HttpServlet {
 		throws ServletException, IOException{
 		PrintWriter pw = response.getWriter();
 		try{
-			String email = request.getParameter("email");
-			String password = request.getParameter("password");
-			String encryPtPass = CryptoUtils.byteArrayToHexString(CryptoUtils.computeHash(password));
-			String firstName = request.getParameter("first_name");
-			String lastName = request.getParameter("last_name");
-			String address = request.getParameter("address");
-			String phone = request.getParameter("phone");
+			String eventName = request.getParameter("event_name");
+			String eventDescription = request.getParameter("description");
+			String eventLocation = request.getParameter("location");
+			int organizerId = Integer.parseInt(request.getParameter("organizer_id"));
+			String startTime = request.getParameter("start_time");
+			String endTime = request.getParameter("end_time");
+			String date= request.getParameter("event_date");
+			String eventType= request.getParameter("event_type");
 			Class.forName("org.postgresql.Driver");
 			Connection connection = null;
 			connection = DriverManager.getConnection(
 				"jdbc:postgresql://localhost:5432/postgres","postgres", "root");
 			PreparedStatement insert = connection.prepareStatement(
-				"INSERT INTO USERS (email, password, first_name, last_name, address, phone) VALUES (?,?,?,?,?,?)");
-			insert.setString(1, email);
-			insert.setString(2, encryPtPass);
-			insert.setString(3, firstName);
-			insert.setString(4, lastName);
-			insert.setString(5, address);
-			insert.setString(6, phone)
+				"INSERT INTO EVENT (name, decription,location, organizer, start_time, end_time, date, type) VALUES (?,?,?,?,?,?,?,?)");
+			insert.setString(1, eventName);
+			insert.setString(2, eventDescription);
+			insert.setString(3, eventLocation);
+			insert.setInt(4, organizerId);
+			insert.setString(5, startTime);
+			insert.setString(6, endTime);
+			insert.setString(7, date);
+			insert.setString(8, eventType);
 			insert.executeQuery();
 			connection.close();
 			pw.println("SUCCESS");
 			//pw.println(email + encryPtPass + firstName + lastName + address);
 		}catch(Exception e){
+			pw.println(e.getMessage());
+			//e.printStackTrace(pw);
 			pw.println("ERROR");
 		}
+		pw.close();
 	}
 }

@@ -39,13 +39,14 @@ public class Signup extends HttpServlet {
 			insert.setString(3, firstName);
 			insert.setString(4, lastName);
 			insert.setString(5, address);
-			insert.setString(6, phone)
-			insert.executeQuery();
+			insert.setString(6, phone);
+			insert.executeUpdate();
 			connection.close();
 			pw.println("SUCCESS");
 			//pw.println(email + encryPtPass + firstName + lastName + address);
 		}catch(Exception e){
 			pw.println("ERROR");
 		}
+		pw.close();
 	}
 }
