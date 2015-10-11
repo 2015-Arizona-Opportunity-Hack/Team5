@@ -7,7 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.*;
-
+import java.text.SimpleDateFormat;
 
 public class CreateEvent extends HttpServlet {
 	private String message;
@@ -29,6 +29,7 @@ public class CreateEvent extends HttpServlet {
 			String endTime = request.getParameter("end_time");
 			String date= request.getParameter("event_date");
 			String eventType= request.getParameter("event_type");
+			SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
 			Class.forName("org.postgresql.Driver");
 			Connection connection = null;
 			connection = DriverManager.getConnection(
@@ -39,16 +40,16 @@ public class CreateEvent extends HttpServlet {
 			insert.setString(2, eventDescription);
 			insert.setString(3, eventLocation);
 			insert.setInt(4, organizerId);
-			insert.setString(5, startTime);
-			insert.setString(6, endTime);
-			insert.setString(7, date);
+			insert.setTime(5, new java.sql.Time((sdf.parse(startTime)).getTime()));
+			insert.setTime(6, new java.sql.Time(sdf.parse(endTime).getTime()));
+			insert.setDate(7, java.sql.Date.valueOf(date));
 			insert.setString(8, eventType);
-			insert.executeQuery();
+			insert.executeUpdate();
 			connection.close();
 			pw.println("SUCCESS");
 			//pw.println(email + encryPtPass + firstName + lastName + address);
 		}catch(Exception e){
-			pw.println(e.getMessage());
+			//pw.println(e.getMessage());
 			//e.printStackTrace(pw);
 			pw.println("ERROR");
 		}

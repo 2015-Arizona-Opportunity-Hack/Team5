@@ -60,5 +60,15 @@
         <servlet-name>ChandlerCreateEvent</servlet-name>
         <url-pattern>/createevent</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>ChandlerGetEvent</servlet-name>
+        <servlet-class>chandler.GetEvents</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ChandlerGetEvent</servlet-name>
+        <url-pattern>/getevent</url-pattern>
+    </servlet-mapping>
 </web-app>     
 
